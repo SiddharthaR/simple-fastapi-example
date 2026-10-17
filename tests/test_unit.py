@@ -58,3 +58,12 @@ def test_get_item_out_of_range_raises_404():
 
     assert exc_info.value.status_code == 404
     assert exc_info.value.detail == "Item 0 not found"
+
+
+def test_get_item_negative_id_raises_404():
+    main.create_item(Item(text="apple"))
+
+    with pytest.raises(HTTPException) as exc_info:
+        main.get_item(-1)
+
+    assert exc_info.value.status_code == 404
