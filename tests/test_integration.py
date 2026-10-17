@@ -116,13 +116,16 @@ def test_get_item_non_integer_id_returns_422(client):
     assert response.status_code == 422
 
 
-@pytest.mark.xfail(
-    reason="get_item does not reject negative ids, so Python negative indexing applies",
-    strict=True,
-)
 def test_get_item_negative_id_returns_404(client):
     client.post("/items", json={"text": "apple"})
 
+    response = client.get("/items/-1")
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Item -1 not found"}
+
+
+def test_get_item_negative_id_on_empty_list_returns_404(client):
     response = client.get("/items/-1")
 
     assert response.status_code == 404
